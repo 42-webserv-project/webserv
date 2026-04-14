@@ -29,6 +29,8 @@ Decision on Deadline
 To Do:
 * Continue research on Webserv, especially points highlighted in Tetiana’s notes as “Before we start, let’s agree on that”
 * Research in-depth on the chosen Module
+* Decide on C++ Standard: 98(lol)/11/17
+* Decide on C++ Style: GoogleStyleGuide/(?)
 
 
 Next Meeting
