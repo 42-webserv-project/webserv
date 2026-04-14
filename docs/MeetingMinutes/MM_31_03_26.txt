@@ -1,0 +1,83 @@
+Meeting [1] - 31 / 03 - Summary
+
+AGENDA
+
+Project start date
+AI usage
+Communication tools / methods
+Next meeting agenda
+
+SUMMARY
+
+Project start date : From 2nd April -> 20 April = research phase. 
+Explore subject / theoretical concepts / talk to people who’ve done it / testing methods
+Explore architecture, error handling, how to split into 3 parts
+Get a clear idea of our template / objects shared between parts (what are we returning / sending to each other)
+
+AI usage
+What is good practice 
+What I can write as a student / what an experienced professional would do
+
+Communication
+Github
+set up github organisation (zivanov or jguacide -> tbd)
+look into git cola
+use pull requests & code reviews
+use github actions
+use docs to document our research
+
+TLDR  - To do before next meeting
+
+Research our subject (conceptual overview, architecture, decide on shared objects and return values, error handling and testing framework + tools, how to split work etc) -> use github docs to document our research
+Set up github organisation
+
+NEXT MEETING : 14 / 04 at 12 pm - Agenda :
+
+Clarify the work split
+make a timeline (goal end-date: 15 June)
+decide on a testing framework (unit test, doctest.h, etc)
+decide on a meeting method (how do we split our meeting time to update each other on our work)
+--- 
+
+(Zacharia's addition)
+Some small points I'm adding (they might be redundant);
+
+
+Shared Knowledge-space (document folder in Github Organization)
+Weekly Meeting/catch-up on Tuesday's 12 pm.
+Maybe have some kind of structure for the meetings? (for example)
+5 min p/person to update where they are personally. (3x5 = 15m)
+20 min to discuss general problems or brainstorm with each other.
+5 min p/person to discuss what we expect to happen this week (from ourselves/eachother).
+10 min to summarize the meeting.
+
+
+Research on Industry Standard Workflow. (You already mention this for next meeting but this seems a bit more of an umbrella term.) 
+Coding together to rubber duck with each other -> JH & Z both can improve on this :slightly_smiling_face:
+Googly Style Guide (?TBD)
+Branches or Commits (?TBD)
+main <- develop <- personal commit/branch
+Code reviews (?TBD)
+
+
+
+
+What I got for next meeting (what I will focus on)
+
+Research on what Standards we want to implement.
+We seem to all agree to want a professional/industrial experience to showcase it and prepare ourselves for the working world.
+The standards contain the following domains:
+Coding style.
+Daily Workflow (together/remote/summary/logging)
+Weekly Workflow (meetings/catchups)
+Code reviews
+Testing / Testers 
+Commiting/branching/merging
+Communication (personal and professional)
+
+
+Research on Webserv in general. 
+Reading the subject.
+Scanning other repo's and their used sources
+Reading README's from other repo's
+Reading 3rd party 42 documentation (manuals on the subject written by students)
