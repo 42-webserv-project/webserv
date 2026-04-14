@@ -1,0 +1,35 @@
+﻿Meeting #2
+
+
+Decision on testing framework
+* We will use doctest.h with Unit Tests
+* To be paired with GitHub Actions so that tests are run before pushing changes
+* UT should have sufficient coverage (meaning: for every new feature, add the appropriate tests to the test file before committing the changes)
+* AI can be used to generate complete tests
+
+
+Decision on branching strategy
+* See Tetiana’s doc for notes on that method
+
+
+Decision on commit method
+* See Tetiana’s doc for notes on that method
+
+
+Decision on work split
+* Module 1 (server) - Tetiana
+* Module 2 (HTTP Parser) - Zach
+* Module 3 (CGI) - Jo
+
+
+Decision on Deadline
+* Eval on 15th June
+
+
+To Do:
+* Continue research on Webserv, especially points highlighted in Tetiana’s notes as “Before we start, let’s agree on that”
+* Research in-depth on the chosen Module
+
+
+Next Meeting
+* Tuesday 21.04, 12-2 pm & 5-5.45 pm + (in-between) team work with Zach&Jo
