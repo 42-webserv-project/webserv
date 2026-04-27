@@ -1,0 +1,63 @@
+*This page describes the data flow between each module defined for the implementation of our webserver: config parser & CGI, webserver and HTTP parser*
+
+In summary: 
+    Config parser: loads server rules before startup.
+    Webserv: uses those rules to manage connections.
+    HTTP parser: interprets each client request.
+    CGI: only runs when the request requires dynamic execution.
+
+Detailed description:
+
+1. Config parser runs first
+
+It reads the config file.
+It builds structs like “server config” and “location config”.
+These structs tell the server things like:
+    which ports to listen on
+    which roots to use
+    which methods are allowed
+    where CGI is enabled
+    upload paths, error pages, redirects, etc.
+
+2. Webserv starts using those structs
+
+The server does not “parse the config” again.
+It uses the parsed config to:
+    open sockets
+    bind to ports
+    decide which settings apply to each incoming request
+    choose the right location block for a request path
+
+3. HTTP parser comes into play when a client connects
+
+A client sends raw bytes over the socket.
+The server reads those bytes.
+The HTTP parser turns the raw request into something structured: method, path, headers, body
+Then the server can understand what the client wants.
+
+4. Server decides what to do with the request
+
+Based on the parsed HTTP request and the config structs, it checks:
+    is this path allowed?
+    is the method allowed?
+    should this be served as a static file?
+    should this be a redirect?
+    should CGI be used?
+
+5. CGI comes into play only for matching requests
+
+If the request matches a CGI rule, the server does not serve it like a normal file.
+Instead, it:
+    prepares CGI environment variables
+    sends request data to the CGI process
+    reads the CGI output
+That CGI output is then turned into an HTTP response.
+
+6. Response goes back to the client
+
+If it was static content, the server sends the file data.
+If it was CGI, the server sends the CGI-generated response.
+If there was an error, it sends the proper error page or status code.
+
+In one line
+    Config parser gives the server its rules, the HTTP parser interprets incoming requests, and CGI is a special branch the server enters only when the request matches a CGI route

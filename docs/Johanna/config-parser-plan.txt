@@ -1,0 +1,191 @@
+*Introductory questions to explore the topic*
+
+1. What is a config parser ?
+    A configuration parser extracts the information from the configuration file, which defines the server's rules. 
+    This information is sent to the web server, which will launch its startup based on the information provided.
+
+2. What information is laid out in a *most minimal* config file & what data structures do I need to store that information ?
+
+    TLDR - Basic config = one server, one location, a few core fields.
+
+    Minimum information needed to start a server:
+        port to listen on
+        host or server name
+        root directory for static files
+        default index file
+        maybe one location / block
+        maybe a few allowed methods 
+    
+    Example:
+        server {
+            listen 8080;
+            server_name localhost;
+            root /var/www/html;
+            index index.html;
+
+            location / {
+                allowed_methods GET POST;
+            }
+        }
+    
+    Data structures to store it:
+        Config - stores all servers
+            struct Config {
+                std::vector<ServerConfig> servers;
+            };
+
+        ServerConfig - listen_port, server_name, root, index, locations
+            struct ServerConfig {
+                int listen_port;
+                std::string server_name;
+                std::string root;
+                std::string index;
+                std::vector<LocationConfig> locations;
+            };
+        
+        LocationConfig - path, allowed_methods
+            struct LocationConfig {
+                std::string path;
+                std::vector<std::string> allowed_methods;
+            };
+
+3. What information is laid out in a *typical* config file & what new fields do I need in my data structures do I need to store that information ?
+
+    TLDR - Typical config = multiple servers and locations, plus redirects, uploads, CGI, error pages and limits
+
+    Typical complete configuration file contains more information:
+        multiple server blocks 
+        multiple location blocks per server
+        different roots per location
+        allowed methods per location
+        redirects
+        error pages
+        upload directory
+        autoindex on/off
+        body size limit
+        CGI mapping by file extension
+        possible multiple listen ports and server names
+
+    Example of a typical file 
+        server {
+            listen 8080;
+            server_name localhost;
+            root /var/www/html;
+            index index.html;
+            client_max_body_size 2M;
+
+            error_page 404 /errors/404.html;
+            error_page 500 /errors/500.html;
+
+            location / {
+                allowed_methods GET;
+                autoindex on;
+            }
+
+            location /upload {
+                allowed_methods POST;
+                upload_store /var/www/uploads;
+            }
+
+            location /cgi-bin {
+                allowed_methods GET POST;
+                cgi .py /usr/bin/python3;
+                cgi .php /usr/bin/php-cgi;
+            }
+
+            location /redirect {
+                return 301 https://example.com;
+            }
+        }
+    
+    The same data structures may be used, only enriched with additional fields:
+       Config - stores all servers
+            struct Config {
+                std::vector<ServerConfig> servers;
+            };
+
+        ServerConfig - listen_ports, server_names, root, index, *client_max_body_size*, *error_pages*, locations
+            struct ServerConfig {
+                std::vector<int> listen_ports;
+                std::vector<std::string> server_names;
+                std::string root;
+                std::string index;
+                std::size_t client_max_body_size = 0;
+                std::map<int, std::string> error_pages;
+                std::vector<LocationConfig> locations;
+            };
+        
+        LocationConfig - path, *root*, *index*, *autoindex*, allowed_methods, *upload_store*, *redirect*, *cgi_map*
+            struct LocationConfig {
+                std::string path;
+                std::string root;
+                std::string index;
+                bool autoindex = false;
+                std::vector<std::string> allowed_methods;
+                std::string upload_store;
+                std::string redirect;
+                std::map<std::string, std::string> cgi_map; // ".py" -> "/usr/bin/python3"
+            }; 
+
+4. Based on subject requirements (mandatory part), what are some more complex parts I should cater for ? // to explore later
+3. Edge cases to consider?
+
+    Duplicate/conflicting directives (same block and across inheritance levels).
+    Invalid or out-of-range values (ports, sizes, status codes).
+    Missing semicolons/braces; unknown directives.
+    Conflicting location matches for one URI.
+    Method not allowed vs route not found (correct HTTP status).
+    Path traversal and unsafe relative paths.
+    CGI configured but executable missing/not executable.
+    Case sensitivity and trailing slash behavior in route matching.
+
+* Step-by-step parsing strategy*
+
+Step 1: Read the file
+    Open the config file.
+    Read the full content into memory, or read line by line.
+
+Step 2: Tokenize it
+    Break the text into meaningful tokens:
+    words like server, location, listen
+    symbols like {, }, ;
+    Ignore comments and extra whitespace.
+
+Step 3: Parse top-level blocks
+    Look for a server { ... } block.
+    Each server block becomes one ServerConfig.
+
+Step 4: Parse directives inside server
+    Read directives like:
+        listen 8080;
+        server_name localhost;
+        root /var/www/html;
+        client_max_body_size 1M;
+    Validate each one:
+        correct number of arguments
+        correct syntax
+        expected format
+
+Step 5: Parse nested location blocks
+    When you see location /path { ... }, create a LocationConfig.
+    Parse its directives separately from the server-level ones.
+
+Step 6: Validate values
+    Check for:
+    missing ;
+    missing { or }
+    duplicate directives when not allowed
+    invalid port numbers
+    invalid file paths
+    unsupported methods
+    malformed CGI rules
+
+Step 7: Apply defaults
+    If some values are optional, set defaults:
+    autoindex = false
+    default index
+    default error pages if needed
+
+Step 8: Build the final config object
+    Store all parsed servers in Config.
+    Pass this object to the rest of the server.
