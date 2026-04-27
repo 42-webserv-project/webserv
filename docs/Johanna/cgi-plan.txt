@@ -1,0 +1,169 @@
+*Introductory questions to explore the topic*
+
+1. What is the CGI ?
+    CGI stands for Common Gateway Interface: it is a standard set for a webserver to run an external program/script in order to generate dynamic content.
+
+2.  What does it do / How does it work ?
+
+    Client will request a CGI route (for example: /cgi-bin/test.py). 
+    Sever detects it should use CGI from configuration parser (cgi mapping + path)
+    Server starts a child process (fork), connects pipes (pipe, dup2), then executes interpreter/script (execve).
+    Child reads input from stdin (for POST, this is the request body) and writes result to stdout.
+    Server reads child output and (status, headers, body) and sends it to HTTP Parser. 
+
+3. What information does it take from the server / http parser ?
+    
+    CGI needs:
+        Method (GET, POST, DELETE ...)
+        Path info (SCRIPT_NAME, PATH_INFO, QUERY_STRING)
+        Request Headers (Content-Type, Content-Length)
+        Request Body (especially for POST)
+        Server metadata (server_name, server_port, protocol)
+        Script path + interpreter path from config (cgi mapping)
+
+4. What information does it give back to the server / http parser ?
+    
+     CGI gives back:
+        CGI headers (e.g. Status:200 OK, Content-Type: text/html)
+        Blank line (separates headers and body)
+        Response body (HTML, JSON, plain text etc)
+        Server converts this into a normal HTTP response to the client (status code, headers, body)
+
+5. How to implement a CGI in C++ (basic step-by-step conceptual plan)
+
+    Build CGI environment variables (REQUEST_METHOD, QUERY_STRING, CONTENT_LENGTH etc) - what is that?
+    Create std/stdout pipes
+    fork()
+    In child: dup2() pipes to stdin/stdout, then execve() interpreter/script
+    In parent: write request body to child stding, close write-end, read child stdout
+    Enforce timeout, kill child if needed
+    Parse CGI output into HTTP status/headers/body -> maybe not in CGP but handled by the person doing HTTP parsing ?
+    Return response through nromal server send path
+    Add robust error paths (exec failure, timeout, malformed CGI output) and return proper error code for it.
+
+6. Most simple example of a CGI script and handler 
+
+    Basic CGI script - writes headers + blank line + body
+
+        #!/usr/bin/env python3
+        # Minimal CGI script
+        import os
+
+        method = os.environ.get('REQUEST_METHOD', 'GET')
+        query = os.environ.get('QUERY_STRING', '')
+
+        print("Content-Type: text/plain")
+        print()
+        print(f"Method: {method}")
+        print(f"Query: {query}")
+    
+    When called, it outputs:
+
+        Content-Type: text/plain
+        Method: GET
+        Query: param=value
+    
+    Basic CGI handler (server part) - forks, execs script, reads output, sends to client
+
+        #include <unistd.h>
+        #include <sys/wait.h>
+        #include <cstring>
+
+        void handle_cgi(const std::string& script_path, const std::string& query) {
+            int pipes[2];
+            pipe(pipes);  // Create pipe for stdout
+            
+            pid_t pid = fork();
+            if (pid == 0) {
+                // Child process
+                dup2(pipes[1], STDOUT_FILENO);  // Redirect stdout to pipe
+                close(pipes[0]);
+                close(pipes[1]);
+                
+                // Set environment variable
+                setenv("QUERY_STRING", query.c_str(), 1);
+                setenv("REQUEST_METHOD", "GET", 1);
+                
+                // Run script
+                execve(script_path.c_str(), nullptr, environ);
+                exit(1);  // If execve fails
+            } else {
+                // Parent process
+                close(pipes[1]);  // Close write end
+                
+                char buffer[1024];
+                ssize_t bytes = read(pipes[0], buffer, sizeof(buffer));
+                
+                // buffer now contains CGI output
+                std::cout << std::string(buffer, bytes);
+                
+                close(pipes[0]);
+                waitpid(pid, nullptr, 0);
+            }
+        }
+
+7. Based on subject requirements, what does a typical CGI script look like?
+
+    #!/usr/bin/env python3
+    import os
+    import sys
+
+    method = os.environ.get('REQUEST_METHOD', 'GET')
+    query = os.environ.get('QUERY_STRING', '')
+    content_length = os.environ.get('CONTENT_LENGTH', '0')
+
+    print("Content-Type: text/html")
+    print("Status: 200 OK")
+    print()
+
+    if method == 'GET':
+        print(f"<h1>GET Request</h1>")
+        print(f"<p>Query: {query}</p>")
+    elif method == 'POST':
+        length = int(content_length) if content_length else 0
+        body = sys.stdin.read(length)
+        print(f"<h1>POST Request</h1>")
+        print(f"<p>Received {len(body)} bytes</p>")
+        print(f"<pre>{body}</pre>")
+    else:
+        print(f"<h1>Method: {method}</h1>")
+
+8. What data structures do I need to implement the CGI handler?
+
+   // Represents one active CGI process (one child), with its PID, pipes, timeout and the client it serves
+    struct CGIProcess {
+        pid_t pid;                    // Child process ID
+        int pipe_read;                // FD for reading child's stdout
+        int pipe_write;               // FD for writing to child's stdin
+        time_t start_time;            // When process started (for timeout)
+        std::size_t timeout_ms;       // Kill if elapsed time!
+        int client_fd;                // Which client connection this serves
+        std::string script_path;      // Which script is running
+        std::string request_body;     // POST data to send to child
+        std::size_t body_sent = 0;    // How many bytes of body already written
+        std::string cgi_output;       // Accumulate stdout as we read it
+        bool headers_parsed = false;  // Have we parsed CGI headers yet?
+    };
+
+    // Represents parsed CGI output (from child's stdout)
+    // This is what is returned to the HTTP parser
+    struct CGIResponse {
+        int status_code;                              // 200, 404, etc.
+        std::map<std::string, std::string> headers;   // Content-Type, etc.
+        std::string body;                             // The actual response
+    };
+
+    // Container for all active CGI processes
+    class CGIManager {
+        private:
+            std::map<pid_t, CGIProcess> active_processes;                        // PID -> CGIProcess
+            std::map<int, pid_t> pipe_to_pid;                                    // FD -> PID (let's you lookup which CGI process owns a pipe FD when poll() starts)
+            
+        public:
+            CGIProcess* spawn_cgi(int client_fd, const std::string& script, 
+                                const std::string& body, std::size_t timeout);
+            void handle_cgi_output(int pipe_fd);                                 // accumulates stdout as you read it
+            void check_timeouts();
+            CGIResponse parse_cgi_output(const std::string& raw_output);
+            void cleanup(pid_t pid);
+        };

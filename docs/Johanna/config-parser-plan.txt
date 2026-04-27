@@ -189,3 +189,5 @@ Step 7: Apply defaults
 Step 8: Build the final config object
     Store all parsed servers in Config.
     Pass this object to the rest of the server.
+
+// to explore later/consider: use smart pointers, use destructors to close fd automatically, makes structures (or classes?) as minimal as possible.
