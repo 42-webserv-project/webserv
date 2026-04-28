@@ -74,11 +74,12 @@ A few things that touch all three modules. We need to align on these before anyo
 
 ---
 
-## Module 3 — Config Parser & CGI
+## Module 3 —  CGI & Response => decide who will do config parser later on
 
-This module has two separate sub-components with different delivery timelines.
+This need to be updated
+[This module has two separate sub-components with different delivery timelines.
 
-> Config parser needs to be done **first** — Module 1 and 2 can't do anything without it. CGI implementation can come later, but its design has to be understood before Module 1 starts writing the event loop.
+> Config parser needs to be done **first** — Module 1 and 2 can't do anything without it. CGI implementation can come later, but its design has to be understood before Module 1 starts writing the event loop.]
 
 ### Config Parser
 
