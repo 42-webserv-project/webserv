@@ -1,0 +1,67 @@
+[WIP]
+Flow of operations for Webserv:
+server INIT
+-	Set up Signals (SIG_INT = shutdown)
+-	Parse Config.
+-	Set up Epoll
+
+---
+
+The Three Modules shortly explained.
+1. The Engine.
+	Basically the framework for the server to operate in. Will make sure
+	the server is listening on a socket/port and will send information to 
+	communicate with other devices.
+
+2. The Parser.
+	State machines. Will take in a string (that can grow in length) and 
+	bit by bit create the HTTPrequest necessary for the logic part.
+
+3. The Logic.
+	The functionality of the server. A server can do multiple things. We want
+	ours to give and take information based on what is requested by the user.
+
+---
+
+Overall comments;
+- Usage of `try`, `throw`, `catch` and `except` required for optimal writing.
+- Usage of a general `Utils` namespace with useful general functions.
+
+---
+
+Interfaces (how do different modules/parts communicate with each other?)
+Define Data Transfer Objects (DTO)
+	Object/structures that have no logic but contain the necessary information
+	for modules to be glued together. 
+
+	Designing these before any code is written will ensure smooth integration.
+
+USER -> Engine -> Parser -> Logic -> Engine -> USER
+
+Engine to Parser: A non-static string will be given.
+	- std::string
+
+Parser to Logic: Parse the string into a clear Object of Instructions.
+		HttpRequest.hpp
+	- Method: What operation will be done in the logic part. GET/POST/DELETE.
+		This can be a string, an int, an enum etc.
+	- Path: The URI requested. (URI stands for Uniform Resource Identifier)
+		Aka: If the operation is GET, this tells us where we can find 
+		whatever it is we want to get.
+	- Headers: Unsure as to what this is really...
+	- Body: Can be empty based on the specific method. But if information
+	is to be send to the server, this is where we find it.
+	(aka; this is empty if we are only requesting information -> GET)
+
+Logic to Engine:
+		HttpResponse.hpp
+			This Object should have a toString() function that the logic
+			module can use in order to send the information back to the
+			user (since the information will be send throughout strings).
+	- Status code; There are numerous standard status codes we must use.
+		There are edgecases (Error 404: Page not found, server down etc)
+		Basically Universal codes that explain whether the request was 
+		succesfull or not.
+	- Headers: ???
+	- Body: The actual HTML/Binary to send to the user.
+
