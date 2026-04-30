@@ -1,0 +1,42 @@
+1. What does an HTTP response consist of, concretely? What does it output?
+
+	An HTTP response consists of 4 parts:
+	1. Status line (HTTP version, status code) -> the answer (success/fail)
+	2. Headers (key-value pairs, one per line to let the client know how to handle the body) -> the instructions (how to)
+	3. Blank line (separating headers from body)
+	4. Body (actual content) -> the content (what)
+
+	It is ouputted as raw bytes over the socket (ie. the pipe associated by the server to that client).
+
+2. What does "response generation logic" mean concretely?
+
+	The person responsible for the response generation, hereafter called "the response handler" would: 
+		1. read files, run CGI, enforce config 
+		2. then generate the response object 
+		3. serialize it to bytes (build a complete response string by concatenating the response object)
+		4. send it over the socket.
+
+2. If I were to receive the most simple HTTP response (a GET request with an existing static HTML file), how would I implement the output generation for that response?
+
+	1. Check if the file exists at the requested path
+	2. Read the file into memory as a string
+	3. Determine the Content-Type (in this case, text/html)
+	4. Get the file size to set Content-Length
+	5. Build the response string with the 4 parts described above.
+	6. Send it over the socket. 
+
+	Example:
+		// Read file
+		std::string body = read_file("file.html");
+
+		// Build response
+		std::string response = "HTTP/1.1 200 OK\r\n";
+		response += "Content-Type: text/html\r\n";
+		response += "Content-Length: " + std::to_string(body.length()) + "\r\n";
+		response += "\r\n";
+		response += body;
+
+		// Send to client
+		send(client_socket_fd, response.c_str(), response.length(), 0);
+
+3. I need to mock this basic config (a HTTP request object for a GET request with an existing static HTML file), help me build it.
