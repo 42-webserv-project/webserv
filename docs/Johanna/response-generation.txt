@@ -1,3 +1,5 @@
+<!-- Looks good! I added two tiny details but overall I agree, it makes sense and it seems complete! Then again, I don't have a full overview yet -->
+
 1. What does an HTTP response consist of, concretely? What does it output?
 
 	An HTTP response consists of 4 parts:
@@ -24,6 +26,7 @@
 	4. Get the file size to set Content-Length
 	5. Build the response string with the 4 parts described above.
 	6. Send it over the socket. 
+<!-- I would maybe swap step 2 and 3, since the content type determines whether we use CGI or not. Just for future implementation -->
 
 	Example:
 		// Read file
@@ -38,5 +41,5 @@
 
 		// Send to client
 		send(client_socket_fd, response.c_str(), response.length(), 0);
-
+<!-- Not too sure, but I think it would be better to have the response be an object instead of a string and then have a function that concatenates all the (relevant) objects to a string. So; response._contentType = "text/html\r\n" etc. -->
 3. I need to mock this basic config (a HTTP request object for a GET request with an existing static HTML file), help me build it.
