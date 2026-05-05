@@ -25,12 +25,12 @@ LOOP forever:
                 StateReading + POLLIN:
                     bytes = recv(fd, chunk)
                     if bytes == 0 or error  →  closeClient(fd)
-                    result = client.parser.parse(client.read_buffer)
+                    resut_status = client.parser.parse(client.read_buffer) //result_status is enum
                     update last_activity
-                    if result.status == INCOMPLETE  →  do nothing, wait next POLLIN
-                    if result.status == ERROR       →  closeClient(fd)
-                    if result.status == COMPLETE:
-                        client.http_request = result.request
+                    if result_status == INCOMPLETE  →  do nothing, wait next POLLIN
+                    if result_status == ERROR       →  closeClient(fd)
+                    if result_status == COMPLETE:
+                        client.http_request = result.request//client.parser.getRequest();
                         if not is_cgi  →  response fills write_buffer
                                           client.state = StateWriting { offset = 0 }
                                           flip fd to POLLOUT
