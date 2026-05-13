@@ -43,3 +43,17 @@
 		send(client_socket_fd, response.c_str(), response.length(), 0);
 <!-- Not too sure, but I think it would be better to have the response be an object instead of a string and then have a function that concatenates all the (relevant) objects to a string. So; response._contentType = "text/html\r\n" etc. -->
 3. I need to mock this basic config (a HTTP request object for a GET request with an existing static HTML file), help me build it.
+
+class HttpResponseState {
+	private:
+		const std::string httpVersion = "HTTP/1.1";
+		enum statusCode;
+		std::map<std::string, std::string> headers; // TODO: change datastructure, as it would lose duplicates
+		std::vector<std::byte> body;
+
+	public:
+		HttpResponseState();
+		HttpResponseState(const HttpResponseState &src);
+		HttpResponseState& operator=(const HttpResponseState &src);
+		~HttpResponseState;
+}
