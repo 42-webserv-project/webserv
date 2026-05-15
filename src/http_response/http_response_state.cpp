@@ -2,12 +2,12 @@
 
 HttpResponseState::HttpResponseState() {}
 
-HttpResponseState::HttpResponseState(const HttpResponseState &src) {}
+//HttpResponseState::HttpResponseState(const HttpResponseState &src) {}
 
-HttpResponseState& HttpResponseState::operator=(const HttpResponseState &src) {}
+//HttpResponseState& HttpResponseState::operator=(const HttpResponseState &src) {}
 
 HttpResponseState::~HttpResponseState() {}
 
-void HttpResponseState::set_body(std::vector <unsigned char> line) {
+// void HttpResponseState::set_body(std::vector <unsigned char> line) {
 	
-}
+// }
