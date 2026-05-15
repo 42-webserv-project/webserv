@@ -27,7 +27,7 @@ class HttpResponseState {
 		~HttpResponseState();
 
 		void set_body(std::vector<unsigned char> buffer);
-		void set_status();
+		//void set_status();
 		//void set_headers();
 };
 
