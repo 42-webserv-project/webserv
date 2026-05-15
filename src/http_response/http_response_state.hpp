@@ -8,6 +8,9 @@
 
 enum StatusCode {
 	OK = 200,
+	BAD_REQUEST = 400,
+	FORBIDDEN = 403,
+	NOT_FOUND = 404,
 };
 
 class HttpResponseState {
@@ -15,7 +18,7 @@ class HttpResponseState {
 		const std::string httpVersion_ = "HTTP/1.1";
 		//StatusCode statusCode_;
 		//std::map<std::string, std::string> headers_; // TODO: change data structure, as it would lose duplicates
-		//std::vector<unsigned char> body_;
+		std::vector<unsigned char> body_;
 
 	public:
 		HttpResponseState();
@@ -23,7 +26,9 @@ class HttpResponseState {
 		//HttpResponseState& operator=(const HttpResponseState &src);
 		~HttpResponseState();
 
-		//void set_body(std::vector <unsigned char> line);
+		void set_body(std::vector<unsigned char> buffer);
+		void set_status();
+		//void set_headers();
 };
 
 #endif 
