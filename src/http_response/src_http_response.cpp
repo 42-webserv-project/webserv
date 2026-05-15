@@ -33,14 +33,14 @@ int fill_response(const std::vector<unsigned char> buffer) {
 	HttpResponseState response;
 
 	response.set_body(buffer);
-	response.set_status();
+	//response.set_status();
 	return 0;
 }
 
 // read file into memory
 int read_file(const HttpRequest request) {
 
-	
+
 	// open file in binary mode
 	std::ifstream input(request.path_, std::ifstream::binary);
 	if (input) {
