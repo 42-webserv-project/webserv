@@ -1,5 +1,5 @@
 # Source of knowledge
-##  Nothing is set in stone. It's all up to engineering judgment at the end of the day.
+## Nothing is set in stone. It's all up to engineering judgment at the end of the day.
 
 - ngnix
 	- [Medium - Nginx Internal Architecture](https://soulaimaneyh.medium.com/nginx-internal-architecture-b94b013bc365)
@@ -14,4 +14,6 @@
 	- [Microsoft Build 2026: How to: Design for exception safety](https://learn.microsoft.com/en-us/cpp/cpp/how-to-design-for-exception-safety?view=msvc-180)
 	- [Microsoft Build 2026: Exceptions and Stack Unwinding in C++](https://learn.microsoft.com/en-us/cpp/cpp/exceptions-and-stack-unwinding-in-cpp?view=msvc-180)
 
-	
+- general good practices
+	- [Keyword explicit and constructors — learncpp](https://www.learncpp.com/cpp-tutorial/converting-constructors-and-the-explicit-keyword/)
+	- [Microsoft Build 2026: Constructors (explicit & Inheriting constructors)](https://learn.microsoft.com/en-us/cpp/cpp/constructors-cpp?view=msvc-180)
