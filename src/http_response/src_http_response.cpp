@@ -18,4 +18,5 @@ int read_file(const HttpRequest request) {
 	while (std::getline(input, line)) {
 		
 	}
+	return 0;
 }
