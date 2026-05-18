@@ -3,5 +3,7 @@
 -Wall
 -Wextra
 -Werror
+-DDEBUG_MODE
+-DLOG_TO_FILE
 
 compile-flags.txt
