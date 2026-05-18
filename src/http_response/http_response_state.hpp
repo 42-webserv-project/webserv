@@ -5,18 +5,21 @@
 #include <vector>
 #include <map>
 #include <cstddef>
+#include "config-mock.hpp"
 
-enum StatusCode {
+enum StatusCode
+{
 	OK = 200,
 	BAD_REQUEST = 400,
 	FORBIDDEN = 403,
 	NOT_FOUND = 404,
+	OTHER = -1,
 };
 
 class HttpResponseState {
 	private:
 		const std::string httpVersion_ = "HTTP/1.1";
-		//StatusCode statusCode_;
+		StatusCode statusCode_;
 		//std::map<std::string, std::string> headers_; // TODO: change data structure, as it would lose duplicates
 		std::vector<unsigned char> body_;
 
@@ -26,9 +29,10 @@ class HttpResponseState {
 		//HttpResponseState& operator=(const HttpResponseState &src);
 		~HttpResponseState();
 
-		void set_body(std::vector<unsigned char> buffer);
-		//void set_status();
-		//void set_headers();
+		void set_body(const HttpRequest& request);
+		void set_statusCode(const HttpRequest& request);
+		StatusCode get_statusCode();
+		// void set_headers();
 };
 
 #endif 
