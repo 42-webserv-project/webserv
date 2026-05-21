@@ -53,8 +53,10 @@ int fill_response(const HttpRequest& request) {
 	HttpResponseState response;
 
 	response.set_statusCode(request);
-	if (response.get_statusCode() == OK)
+	if (response.get_statusCode() == OK) {
 		response.set_body(request);
+	}
+
 	else
 		return (-1);
 	return 0;
@@ -71,7 +73,8 @@ std::vector<unsigned char> read_file(const HttpRequest request) {
 	input.seekg(0, input.beg);
 
 	// allocate memory
-	std::vector<unsigned char> buffer(size);
+	std::vector<unsigned char>
+		buffer(size);
 
 	// read data as a block
 	input.read(reinterpret_cast<char*>(buffer.data()), size);

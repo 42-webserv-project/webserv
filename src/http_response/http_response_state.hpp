@@ -20,7 +20,7 @@ class HttpResponseState {
 	private:
 		const std::string httpVersion_ = "HTTP/1.1";
 		StatusCode statusCode_;
-		//std::map<std::string, std::string> headers_; // TODO: change data structure, as it would lose duplicates
+		std::vector<std::pair<std::string, std::string>> headers_;
 		std::vector<unsigned char> body_;
 
 	public:
@@ -32,7 +32,7 @@ class HttpResponseState {
 		void set_body(const HttpRequest& request);
 		void set_statusCode(const HttpRequest& request);
 		StatusCode get_statusCode();
-		// void set_headers();
+		void add_header(const std::string& name, const std::string& value);
 };
 
 #endif 

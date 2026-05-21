@@ -19,6 +19,11 @@ void HttpResponseState::set_body(const HttpRequest& request) {
 	std::vector<unsigned char> buffer;
 
 	buffer = read_file(request);
+
+	// store content length in headers_
+	int length = buffer.size();
+	add_header("Content-Length", std::to_string(length));
+
 	// data() allows us to print the body's content,
 	// by returning a pointer to the first char of the vector
 	body_.assign(buffer.begin(), buffer.end());
@@ -37,4 +42,8 @@ void HttpResponseState::set_statusCode(const HttpRequest& request) {
 
 StatusCode HttpResponseState::get_statusCode() {
 	return statusCode_;
+}
+
+void HttpResponseState::add_header(const std::string& name, const std::string& value) {
+	headers_.push_back({name, value});
 }
