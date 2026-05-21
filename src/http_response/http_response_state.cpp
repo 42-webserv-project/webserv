@@ -20,10 +20,6 @@ void HttpResponseState::set_body(const HttpRequest& request) {
 
 	buffer = read_file(request);
 
-	// store content length in headers_
-	int length = buffer.size();
-	add_header("Content-Length", std::to_string(length));
-
 	// data() allows us to print the body's content,
 	// by returning a pointer to the first char of the vector
 	body_.assign(buffer.begin(), buffer.end());
@@ -42,6 +38,20 @@ void HttpResponseState::set_statusCode(const HttpRequest& request) {
 
 StatusCode HttpResponseState::get_statusCode() {
 	return statusCode_;
+}
+
+
+void HttpResponseState::set_headers(const HttpRequest& request) {
+	// store content length
+	add_header("Content-Length", std::to_string(body_.size()));
+	// store content type
+	
+// 	read request.path_
+// find the last . in the filename
+// take what comes after it
+// map that extension to a content type --> could i use a map/enum for that when scaling for different types later
+// store that in your response headers
+
 }
 
 void HttpResponseState::add_header(const std::string& name, const std::string& value) {
