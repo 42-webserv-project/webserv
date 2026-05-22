@@ -5,6 +5,7 @@
 StatusCode check_file_error(const HttpRequest &request);
 std::vector<unsigned char> read_file(const HttpRequest request);
 StatusCode check_method_error(const HttpRequest &request);
+std::string parse_type(const HttpRequest &request);
 
 HttpResponseState::HttpResponseState() {}
 
@@ -45,15 +46,17 @@ void HttpResponseState::set_headers(const HttpRequest& request) {
 	// store content length
 	add_header("Content-Length", std::to_string(body_.size()));
 	// store content type
-	
-// 	read request.path_
-// find the last . in the filename
-// take what comes after it
-// map that extension to a content type --> could i use a map/enum for that when scaling for different types later
-// store that in your response headers
 
+	std::string type = parse_type(request);
+	add_header("Content-Type", type);
 }
 
 void HttpResponseState::add_header(const std::string& name, const std::string& value) {
 	headers_.push_back({name, value});
 }
+
+// void HttpResponseState::read_headers() {
+// 	for (const std::pair<std::string, std::string>& header : headers_) {
+//     std::cout << header.first << ": " << header.second << std::endl;
+// }
+// }
