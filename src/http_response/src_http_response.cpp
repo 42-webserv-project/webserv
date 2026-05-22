@@ -55,7 +55,8 @@ int fill_response(const HttpRequest& request) {
 	response.set_statusCode(request);
 	if (response.get_statusCode() == OK) {
 		response.set_body(request);
-		response.set_headers(request)
+		response.set_headers(request);
+		response.read_headers();
 	}
 	else
 		return (-1);
@@ -80,4 +81,17 @@ std::vector<unsigned char> read_file(const HttpRequest request) {
 	input.close();
 
 	return buffer;
+}
+
+// extract content type from path
+// todo: add fall back in case of empty string (default MIME type)
+std::string parse_type(const HttpRequest& request) {
+
+	std::filesystem::path p(request.path_);
+	// extension() returns the substring starting at the last dot of the filename
+	std::string str = p.extension().string(); 
+	if (!str.empty() && str.front() == '.')
+		str.erase(0, 1);
+	std::cout << str << std::endl;
+	return str;
 }
