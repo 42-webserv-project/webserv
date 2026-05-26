@@ -34,7 +34,7 @@ class HttpResponseState {
 		StatusCode get_statusCode();
 		void set_headers(const HttpRequest& request);
 		void add_header(const std::string& name, const std::string& value);
-		std::string serialize(void);
+		std::string serialize (void) ;
 		// //temp debug
 		// void read_headers();
 };
