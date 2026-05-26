@@ -63,21 +63,23 @@ void HttpResponseState::add_header(const std::string& name, const std::string& v
 
 std::string HttpResponseState::serialize (void) {
 	std::string response;
+	int code = static_cast<int>(this->statusCode_);
 	std::string status_str = "OK"; // TODO: hardcoded for now, build a map for corresponding enum status to str
 
 	// first part: status line (HTTP version, status code)
-	response += "HTTP/1.1 "; //default
-	response += std::to_string(this->statusCode_) += " ";
-	response += status_str += " ";
-	response += "\r\n";
+	response.append("HTTP/1.1 "); //default
+	response.append(std::to_string(code));
+	response.append(" ");
+	response.append(status_str);
+	response.append("\r\n");
 
 	// second part: Headers
 	for (const auto &h : headers_) {
-		response += h.first + ": " + h.second += "\r\n";
+		response + h.first + ": " + h.second + "\r\n";
 	}
 
 	// Default blank line separating headers from body
-	response += "\r\n";
+	response.append("\r\n");
 
 	// Third part: body
 	if (!body_.empty()) {
