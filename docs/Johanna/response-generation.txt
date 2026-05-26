@@ -57,3 +57,15 @@ class HttpResponseState {
 		HttpResponseState& operator=(const HttpResponseState &src);
 		~HttpResponseState;
 }
+
+TO DO:
+- add tests for the current GET response object
+- cover the main edge cases for GET 
+	* (Add the simplest happy-path test first: existing static file, 200 OK, correct Content-Length, correct Content-Type, body included.
+	* Add a few edge cases right after that: missing file, unreadable file, unsupported method, empty body, no extension.)
+- stabilize serialization output
+- extend to other methods (POST etc)
+- then handle more complex request types
+
+- implement clang format
+- implement github actions
