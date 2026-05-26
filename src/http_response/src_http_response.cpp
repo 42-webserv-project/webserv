@@ -56,7 +56,8 @@ int fill_response(const HttpRequest& request) {
 	if (response.get_statusCode() == OK) {
 		response.set_body(request);
 		response.set_headers(request);
-		response.read_headers();
+		response.set_headers(request);
+		response.serialize();
 	}
 	else
 		return (-1);
@@ -92,6 +93,6 @@ std::string parse_type(const HttpRequest& request) {
 	std::string str = p.extension().string(); 
 	if (!str.empty() && str.front() == '.')
 		str.erase(0, 1);
-	std::cout << str << std::endl;
+	//std::cout << str << std::endl;
 	return str;
 }
