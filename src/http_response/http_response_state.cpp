@@ -1,6 +1,4 @@
 #include "http_response_state.hpp"
-#include <iostream>
-#include <fstream>
 
 StatusCode check_file_error(const HttpRequest &request);
 std::vector<unsigned char> read_file(const HttpRequest request);
@@ -9,13 +7,14 @@ std::string parse_type(const HttpRequest &request);
 
 HttpResponseState::HttpResponseState() {}
 
-//HttpResponseState::HttpResponseState(const HttpResponseState &src) {}
+// HttpResponseState::HttpResponseState(const HttpResponseState &src) {}
 
-//HttpResponseState& HttpResponseState::operator=(const HttpResponseState &src) {}
+// HttpResponseState& HttpResponseState::operator=(const HttpResponseState &src) {}
 
 HttpResponseState::~HttpResponseState() {}
 
-void HttpResponseState::set_body(const HttpRequest& request) {
+void HttpResponseState::set_body(const HttpRequest &request)
+{
 
 	std::vector<unsigned char> buffer;
 
@@ -24,25 +23,27 @@ void HttpResponseState::set_body(const HttpRequest& request) {
 	// data() allows us to print the body's content,
 	// by returning a pointer to the first char of the vector
 	body_.assign(buffer.begin(), buffer.end());
-	//std::cout << body_.data() << std::endl; // TODO: .data() is dangerous if buffer is not null terminated. overload print instead.
+	// std::cout << body_.data() << std::endl; // TODO: .data() is dangerous if buffer is not null terminated. overload print instead.
 }
 
-void HttpResponseState::set_statusCode(const HttpRequest& request) {
+void HttpResponseState::set_statusCode(const HttpRequest &request)
+{
 	StatusCode status;
 
 	status = check_method_error(request);
 	if (status == OK)
 		status = check_file_error(request);
-	//std::cout << status << std::endl;
+	// std::cout << status << std::endl;
 	statusCode_ = status;
 }
 
-StatusCode HttpResponseState::get_statusCode() {
+StatusCode HttpResponseState::get_statusCode()
+{
 	return statusCode_;
 }
 
-
-void HttpResponseState::set_headers(const HttpRequest& request) {
+void HttpResponseState::set_headers(const HttpRequest &request)
+{
 	// store content length
 	add_header("Content-Length", std::to_string(body_.size()));
 	// store content type
@@ -51,7 +52,8 @@ void HttpResponseState::set_headers(const HttpRequest& request) {
 	add_header("Content-Type", type);
 }
 
-void HttpResponseState::add_header(const std::string& name, const std::string& value) {
+void HttpResponseState::add_header(const std::string &name, const std::string &value)
+{
 	headers_.push_back({name, value});
 }
 
@@ -61,20 +63,22 @@ void HttpResponseState::add_header(const std::string& name, const std::string& v
 // 3. Blank line (separating headers from body)
 // 4. Body (actual content) -> the content (what)
 
-std::string HttpResponseState::serialize (void) {
+std::string HttpResponseState::serialize(void)
+{
 	std::string response;
 	int code = static_cast<int>(this->statusCode_);
 	std::string status_str = "OK"; // TODO: hardcoded for now, build a map for corresponding enum status to str
 
 	// first part: status line (HTTP version, status code)
-	response.append("HTTP/1.1 "); //default
+	response.append("HTTP/1.1 "); // default
 	response.append(std::to_string(code));
 	response.append(" ");
 	response.append(status_str);
 	response.append("\r\n");
 
 	// second part: Headers
-	for (const auto &h : headers_) {
+	for (const auto &h : headers_)
+	{
 		response + h.first + ": " + h.second + "\r\n";
 	}
 
@@ -82,9 +86,10 @@ std::string HttpResponseState::serialize (void) {
 	response.append("\r\n");
 
 	// Third part: body
-	if (!body_.empty()) {
+	if (!body_.empty())
+	{
 		response.append(reinterpret_cast<const char *>(body_.data()), body_.size());
 	}
-	std::cout << response << std::endl;
+	// std::cout << response << std::endl;
 	return response;
 }
