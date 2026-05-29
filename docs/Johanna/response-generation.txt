@@ -66,7 +66,8 @@ TO DO:
 
 
 Make file validation deterministic first in src_http_response.cpp.
-Right now existence plus stream-open is not enough. You want clear rules for missing path, non-regular file (directory), unreadable file, and readable regular file. This removes platform-dependent behavior and stabilizes both runtime and tests.
+Right now existence plus stream-open is not enough. You want clear rules for missing path, non-regular file (directory), unreadable file, and readable regular file. \
+This removes platform-dependent behavior and stabilizes both runtime and tests.
 
 Fix response serialization correctness in http_response_state.cpp.
 This is the most critical bug area: headers are not actually appended in the header loop, status text is hardcoded, and the response format should always be status line + headers + blank line + body. Until this is fixed, GET may appear to work but wire output is incomplete.
@@ -84,56 +85,3 @@ Tighten tests after each fix in http_response_assert.cpp.
 As each behavior becomes correct, turn on the strict toggles you already prepared. This lets your tests evolve with the implementation instead of rewriting test structure later.
 
 If you want, the next concrete move can be just one focused milestone: make deterministic file classification plus fully correct serialization, then immediately enable strict Content-Length checks in your assert file. That gives the biggest jump in GET quality with minimal scope creep.
-
-
-
-ON STEP 1:
-When people say deterministic here, they mean:
-for one input path, your function should always return the same status for a clear reason.
-
-In your current flow in src_http_response.cpp, validation is roughly:
-
-does the path exist?
-can ifstream open it?
-That sounds fine, but it misses an important distinction: not every existing path is a regular file. A directory can exist, and stream behavior for directories can vary by OS/library. That is where “platform-dependent” came from.
-
-Here is the beginner-friendly rule set you want.
-
-The 4 explicit validation outcomes
-
-Path does not exist
-Return NOT_FOUND (404).
-
-Path exists but is not a regular file (for example: directory, device, pipe)
-Return FORBIDDEN (403), or whichever status your team decides for “not a file”.
-
-Path is a regular file but cannot be opened/read (permissions, locks, etc.)
-Return FORBIDDEN (403).
-
-Path is a regular file and readable
-Return OK (200).
-
-The important part is the order:
-
-existence check
-file-type check (regular file or not)
-readability/open check
-If you skip step 2, directories can sneak into step 3 and produce inconsistent results.
-
-Why this stabilizes tests:
-
-Your tests stop depending on low-level stream quirks.
-A “directory path” test becomes predictable.
-Runtime behavior and test behavior align.
-Why this matters for the whole GET workflow:
-
-Everything after validation (set status, read body, set headers, serialize) assumes validation is correct.
-If validation is fuzzy, downstream logic looks broken even when it is not.
-Solid validation gives you a clean base for the rest of your response pipeline.
-A practical “definition of done” for Step 1:
-
-Missing file always maps to NOT_FOUND.
-Directory path always maps to your chosen non-file status.
-Unreadable regular file always maps to FORBIDDEN.
-Readable regular file always maps to OK.
-Your edge-case asserts in http_response_assert.cpp for these cases become stable (no platform surprises).
