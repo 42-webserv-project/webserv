@@ -1,24 +1,21 @@
 #ifndef HTTP_RESPONSE_STATE_H
 #define HTTP_RESPONSE_STATE_H
 
-#include <iostream>
+#include "config-mock.hpp"
+#include <cstddef>
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-#include <cstddef>
-#include <filesystem>
-
-#include "config-mock.hpp"
 
 enum StatusCode
 {
 	OK = 200,
-	BAD_REQUEST = 400,
 	FORBIDDEN = 403,
 	NOT_FOUND = 404,
-	OTHER = -1,
 };
 
 class HttpResponseState
@@ -32,7 +29,7 @@ private:
 public:
 	HttpResponseState();
 	// HttpResponseState(const HttpResponseState &src);
-	// HttpResponseState& operator=(const HttpResponseState &src);
+	// HttpResponseState &operator=(const HttpResponseState &src);
 	~HttpResponseState();
 
 	void set_body(const HttpRequest &request);
