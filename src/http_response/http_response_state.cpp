@@ -67,19 +67,20 @@ std::string HttpResponseState::serialize(void)
 {
 	std::string response;
 	int code = static_cast<int>(this->statusCode_);
-	std::string status_str = "OK"; // TODO: hardcoded for now, build a map for corresponding enum status to str
 
 	// first part: status line (HTTP version, status code)
 	response.append("HTTP/1.1 "); // default
 	response.append(std::to_string(code));
 	response.append(" ");
-	response.append(status_str);
 	response.append("\r\n");
 
 	// second part: Headers
 	for (const auto &h : headers_)
 	{
-		response + h.first + ": " + h.second + "\r\n";
+		response.append(h.first);
+		response.append(": ");
+		response.append(h.second);
+		response.append("\r\n");
 	}
 
 	// Default blank line separating headers from body
@@ -90,6 +91,6 @@ std::string HttpResponseState::serialize(void)
 	{
 		response.append(reinterpret_cast<const char *>(body_.data()), body_.size());
 	}
-	// std::cout << response << std::endl;
+	std::cout << response << std::endl;
 	return response;
 }
