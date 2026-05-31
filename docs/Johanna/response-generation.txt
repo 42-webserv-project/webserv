@@ -64,11 +64,6 @@ TO DO:
 
 - implement github actions
 
-
-Make file validation deterministic first in src_http_response.cpp.
-Right now existence plus stream-open is not enough. You want clear rules for missing path, non-regular file (directory), unreadable file, and readable regular file. \
-This removes platform-dependent behavior and stabilizes both runtime and tests.
-
 Fix response serialization correctness in http_response_state.cpp.
 This is the most critical bug area: headers are not actually appended in the header loop, status text is hardcoded, and the response format should always be status line + headers + blank line + body. Until this is fixed, GET may appear to work but wire output is incomplete.
 
