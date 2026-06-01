@@ -69,7 +69,7 @@ std::string HttpResponseState::serialize(void)
 	int code = static_cast<int>(this->statusCode_);
 
 	// first part: status line (HTTP version, status code)
-	response.append("HTTP/1.1 "); // default
+	response.append(httpVersion_);
 	response.append(std::to_string(code));
 	response.append(" ");
 	response.append("\r\n");
