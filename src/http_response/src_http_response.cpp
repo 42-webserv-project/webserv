@@ -63,11 +63,10 @@ int	fill_response(const HttpRequest &request)
 	{
 		response.set_body(request);
 		response.set_headers(request);
-		response.set_headers(request);
 		response.serialize();
 	}
 	else
-		return (-1);
+		return (-1); // TODO what happens in this case?
 	return (0);
 }
 
