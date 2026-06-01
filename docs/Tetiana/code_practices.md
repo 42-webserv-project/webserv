@@ -10,3 +10,5 @@
 9. Make function description full or just a short comment about it
 10. You need to have a system for how you track errors, the same logic to have consistency
 11. Const-correctness – if method could be const it should be const
+12. strace -f -e trace=close (binary_name) 2>&1 | grep 'close(3)'
+	check descriptors. especially double close
