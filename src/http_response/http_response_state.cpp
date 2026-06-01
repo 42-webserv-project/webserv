@@ -57,6 +57,16 @@ void HttpResponseState::add_header(const std::string &name, const std::string &v
 	headers_.push_back({name, value});
 }
 
+static std::string convert_statusCode(int code) {
+	if (code == 200)
+		return "OK";
+	else if (code == 403)
+		return "FORBIDDEN";
+	else if (code == 404)
+		return "NOT FOUND";
+	return "CODE_READ_ERR";
+}
+
 // An HTTP response consists of 4 parts:
 // 1. Status line (HTTP version, status code) -> the answer (success/fail)
 // 2. Headers (key-value pairs, one per line to let the client know how to handle the body) -> the instructions (how to)
@@ -67,10 +77,14 @@ std::string HttpResponseState::serialize(void)
 {
 	std::string response;
 	int code = static_cast<int>(this->statusCode_);
+	std::string status_str = convert_statusCode(code);
 
 	// first part: status line (HTTP version, status code)
 	response.append(httpVersion_);
+	response.append(" ");
 	response.append(std::to_string(code));
+	response.append(" ");
+	response.append(status_str);
 	response.append(" ");
 	response.append("\r\n");
 
