@@ -59,37 +59,37 @@ int	fill_response(const HttpRequest &request)
 	HttpResponseState	response;
 
 	response.set_statusCode(request);
-	if (response.get_statusCode() == OK)
-	{
-		response.set_body(request);
-		response.set_headers(request);
-		response.serialize();
-	}
-	else
-		return (-1); // TODO what happens in this case?
+	response.set_body(request);
+	response.set_headers(request);
+	response.serialize();
+
 	return (0);
 }
 
 // read file into memory
 std::vector<unsigned char> read_file(const HttpRequest request)
 {
-	int	size;
-
 	// open file in binary mode
 	std::ifstream input(request.path_, std::ifstream::binary);
+	if (!input.is_open())
+		return {};
+
 	// check size of the file
-	input.seekg(0, input.end);
-	size = input.tellg();
-	input.seekg(0, input.beg);
+	input.seekg(0, std::ios::end);
+	std::streamsize size = input.tellg();
+	if (size < 0)
+		return {};
+
+	input.seekg(0, std::ios::beg);
 	// allocate memory
 	std::vector<unsigned char> buffer(size);
-	// read data as a block
-	input.read(reinterpret_cast<char *>(buffer.data()), size);
+	if (size > 0)
+		input.read(reinterpret_cast<char *>(buffer.data()), size);
 	input.close();
 	return (buffer);
 }
 
-// extract content type from path
+// extract content type from path;
 // todo: add fall back in case of empty string (default MIME type)
 std::string parse_type(const HttpRequest &request)
 {
