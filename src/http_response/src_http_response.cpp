@@ -88,7 +88,11 @@ std::vector<unsigned char> read_file(const HttpRequest request)
 	input.close();
 	return (buffer);
 }
-
+std::string complete_MIME_type(std::string extension) {
+	if (extension == "html" || extension == "htm")
+    	return "text/html";
+	return "application/octet-stream";
+}
 // extract content type from path;
 // todo: add fall back in case of empty string (default MIME type)
 std::string parse_type(const HttpRequest &request)
@@ -96,8 +100,10 @@ std::string parse_type(const HttpRequest &request)
 	std::filesystem::path p(request.path_);
 	// extension() returns the substring starting at the last dot of the filename
 	std::string str = p.extension().string();
-	if (!str.empty() && str.front() == '.')
+	if (!str.empty() && str.front() == '.') {
 		str.erase(0, 1);
+		str = complete_MIME_type(str);
+	}
 	// std::cout << "here" << str << std::endl;
 	return (str);
 }
