@@ -16,6 +16,7 @@ enum StatusCode
 	OK = 200,
 	FORBIDDEN = 403,
 	NOT_FOUND = 404,
+	OTHER = -1,
 };
 
 class HttpResponseState
