@@ -89,7 +89,7 @@ std::vector<unsigned char> read_file(const HttpRequest request)
 	return (buffer);
 }
 std::string complete_MIME_type(std::string extension) {
-	if (extension == "html" || extension == "htm")
+	if (extension == "html" || extension == "HTML")
     	return "text/html";
 	return "application/octet-stream";
 }

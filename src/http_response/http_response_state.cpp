@@ -33,6 +33,8 @@ void HttpResponseState::set_statusCode(const HttpRequest &request)
 	status = check_method_error(request);
 	if (status == OK)
 		status = check_file_error(request);
+	else
+		status = OTHER;
 	// std::cout << status << std::endl;
 	statusCode_ = status;
 }
