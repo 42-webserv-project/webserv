@@ -85,7 +85,6 @@ std::string HttpResponseState::serialize(void)
 	response.append(std::to_string(code));
 	response.append(" ");
 	response.append(status_str);
-	response.append(" ");
 	response.append("\r\n");
 
 	// second part: Headers
@@ -105,6 +104,6 @@ std::string HttpResponseState::serialize(void)
 	{
 		response.append(reinterpret_cast<const char *>(body_.data()), body_.size());
 	}
-	std::cout << response << std::endl;
+	//std::cout << response << std::endl;
 	return response;
 }
