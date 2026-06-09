@@ -91,7 +91,6 @@ std::vector<unsigned char> read_file(const HttpRequest request)
 }
 std::string complete_MIME_type(std::string extension) {
 	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-	std::cout << "check extension to lower: " << extension << std::endl;
 	if (extension == "html")
     	return "text/html";
 	else if (extension == "css")
