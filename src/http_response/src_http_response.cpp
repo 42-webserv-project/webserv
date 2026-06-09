@@ -1,4 +1,5 @@
 #include "http_response_state.hpp"
+#include <algorithm>
 
 // read file:
 // check if file exists,
@@ -89,8 +90,20 @@ std::vector<unsigned char> read_file(const HttpRequest request)
 	return (buffer);
 }
 std::string complete_MIME_type(std::string extension) {
-	if (extension == "html" || extension == "HTML")
+	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+	std::cout << "check extension to lower: " << extension << std::endl;
+	if (extension == "html")
     	return "text/html";
+	else if (extension == "css")
+		return "text/css";
+	else if (extension == "json")
+		return "application/json";
+	else if (extension == "png")
+		return "image/png";
+	else if (extension == "jpg" || "jpeg" )
+		return "image/jpeg";
+	else if (extension == "txt")
+		return "text/plain";
 	return "application/octet-stream";
 }
 // extract content type from path;
