@@ -71,6 +71,4 @@ TO DO / CURRENT STATE:
 - later: add github actions.
 
 Current gap notes:
-- parse_type currently returns text/html for .html, application/octet-stream for unknown extensions, and an empty string when there is no extension.
-- unsupported methods are currently collapsed to OTHER in the response state, which serializes to -1 CODE_READ_ERR instead of a valid HTTP status line.
 - fill_response() still just assembles a response locally; it does not yet own the full success/failure wire path.
