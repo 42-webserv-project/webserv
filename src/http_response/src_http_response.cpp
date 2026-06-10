@@ -32,7 +32,7 @@ StatusCode	check_method_error(const HttpRequest &request)
 {
 	if (request.method_ == "GET")
 		return (OK);
-	return (NOT_FOUND); // TODO update with appropriate error code
+	return (NOT_ALLOWED);
 }
 
 StatusCode	check_file_error(const HttpRequest &request)
