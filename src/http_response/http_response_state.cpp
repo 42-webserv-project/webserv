@@ -33,9 +33,6 @@ void HttpResponseState::set_statusCode(const HttpRequest &request)
 	status = check_method_error(request);
 	if (status == OK)
 		status = check_file_error(request);
-	else
-		status = OTHER;
-	// std::cout << status << std::endl;
 	statusCode_ = status;
 }
 
@@ -66,7 +63,9 @@ static std::string convert_statusCode(int code) {
 		return "FORBIDDEN";
 	else if (code == 404)
 		return "NOT FOUND";
-	return "CODE_READ_ERR";
+	else if (code == 405)
+		return "METHOD NOT ALLOWED";	
+	return "CODE_READ_ERR"; // change default to application/octet-stream or 500 internal server?
 }
 
 // An HTTP response consists of 4 parts:
