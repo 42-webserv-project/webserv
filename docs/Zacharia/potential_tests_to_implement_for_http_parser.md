@@ -185,48 +185,6 @@ TEST_CASE("BUG: Assignment operator doesn't copy member variables") {
 	CHECK(p2.GetVersion() == "HTTP/1.1");
 }
 
-TEST_CASE("BUG: ParseMethod failure doesn't set Error state") {
-	// Lines 364-365: If ParseMethod returns -1, state is not set to Error
-	// This causes the parser to continue in RequestLine state
-	HttpParser p;
-
-	p.Feed("INVALID_METHOD / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("\r\n");
-
-	// Should be in Error state, but it's likely NeedMoreData
-	CHECK(p.GetInternalState() == Error);
-	CHECK(p.GetExternalState() == InvalidRequest);
-}
-
-TEST_CASE("BUG: Empty method string parsing") {
-	// Edge case: what if method is empty?
-	HttpParser p;
-
-	p.Feed(" / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("\r\n");
-
-	CHECK(p.GetExternalState() == InvalidRequest);
-}
-
-TEST_CASE("BUG: Content-Length with leading zeros") {
-	// Should be treated as valid decimal (e.g., "00013" = 13)
-	HttpParser p;
-
-	std::string body = "Hello, World!";
-	
-	p.Feed("POST / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("Content-Length: 00013\r\n");
-	p.Feed("\r\n");
-	p.Feed(body.c_str());
-
-	CHECK(p.GetBodyExpectedLength() == 13);
-	CHECK(p.GetBody() == "Hello, World!");
-	CHECK(p.GetExternalState() == Complete);
-}
-
 TEST_CASE("BUG: Reusing parser after completion (parser state not reset)") {
 	// Bug: Parser doesn't have a reset mechanism
 	// Feeding new data after completion might cause issues
@@ -250,21 +208,6 @@ TEST_CASE("BUG: Reusing parser after completion (parser state not reset)") {
 	CHECK(p.GetExternalState() == Complete);
 }
 
-TEST_CASE("BUG: Multiple colons in header value") {
-	// Edge case: URL-like header value with colons
-	HttpParser p;
-
-	p.Feed("GET / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("X-URL: http://example.com:8080\r\n");
-	p.Feed("\r\n");
-
-	auto headers = p.GetHeaders();
-	CHECK(headers.find("x-url") != headers.end());
-	CHECK(headers["x-url"] == "http://example.com:8080");
-	CHECK(p.GetExternalState() == Complete);
-}
-
 TEST_CASE("BUG: Header with tab as OWS") {
 	// Test optional whitespace (tabs vs spaces)
 	HttpParser p;
@@ -276,22 +219,6 @@ TEST_CASE("BUG: Header with tab as OWS") {
 	auto headers = p.GetHeaders();
 	CHECK(headers.find("host") != headers.end());
 	CHECK(headers["host"] == "example.com");
-	CHECK(p.GetExternalState() == Complete);
-}
-
-TEST_CASE("BUG: Zero-length body with extra trailing data") {
-	// Content-Length is 0 but there's data after headers
-	HttpParser p;
-
-	p.Feed("POST / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("Content-Length: 0\r\n");
-	p.Feed("\r\n");
-	p.Feed("UNEXPECTED_DATA");
-
-	// Should succeed with zero-length body and ignore trailing data
-	CHECK(p.GetBodyExpectedLength() == 0);
-	CHECK(p.GetBody() == "");
 	CHECK(p.GetExternalState() == Complete);
 }
 
