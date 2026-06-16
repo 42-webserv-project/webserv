@@ -137,38 +137,6 @@ TEST_CASE("Empty header value") {
 // BUG HUNTING TEST CASES
 // ============================================================================
 
-TEST_CASE("BUG: Body size larger than Content-Length should fail") {
-	// BUG: The parser checks if buffer size > body_expected_len and marks as Error
-	// But the test data has EXACT size, let's test with extra data
-	HttpParser p;
-
-	std::string body = "Hello, World!";
-	
-	p.Feed("POST / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("Content-Length: 13\r\n");
-	p.Feed("\r\n");
-	p.Feed(body.c_str());
-	p.Feed("EXTRA_DATA");  // This extra data should cause error
-
-	CHECK(p.GetExternalState() == InvalidRequest);
-	CHECK(p.GetInternalState() == Error);
-}
-
-TEST_CASE("BUG: Path with only whitespace should be rejected") {
-	// TODO comment at line 379: "What if input is: GET  HTTP/1.0"
-	// The current implementation treats the space as part of the path
-	HttpParser p;
-
-	p.Feed("GET  HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("\r\n");
-
-	// This should either fail or handle it gracefully
-	// Current behavior: path_ = " " (single space)
-	CHECK(p.GetPath() == "");  // Should be empty, not a space
-}
-
 TEST_CASE("BUG: Assignment operator doesn't copy member variables") {
 	// Lines 47-54: The assignment operator is empty (does nothing)
 	HttpParser p1;
@@ -208,20 +176,6 @@ TEST_CASE("BUG: Reusing parser after completion (parser state not reset)") {
 	CHECK(p.GetExternalState() == Complete);
 }
 
-TEST_CASE("BUG: Header with tab as OWS") {
-	// Test optional whitespace (tabs vs spaces)
-	HttpParser p;
-
-	p.Feed("GET / HTTP/1.1\r\n");
-	p.Feed("Host:\texample.com\r\n");  // Tab instead of space
-	p.Feed("\r\n");
-
-	auto headers = p.GetHeaders();
-	CHECK(headers.find("host") != headers.end());
-	CHECK(headers["host"] == "example.com");
-	CHECK(p.GetExternalState() == Complete);
-}
-
 TEST_CASE("BUG: Incomplete body (partial data)") {
 	// If body is incomplete, should stay in NeedMoreData
 	HttpParser p;
@@ -236,21 +190,6 @@ TEST_CASE("BUG: Incomplete body (partial data)") {
 	CHECK(p.GetInternalState() == Body);
 }
 
-TEST_CASE("BUG: Both Transfer-Encoding and Content-Length present") {
-	// According to RFC, this should be rejected (already implemented)
-	// But let's verify it works correctly
-	HttpParser p;
-
-	p.Feed("POST / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("Transfer-Encoding: chunked\r\n");
-	p.Feed("Content-Length: 5\r\n");
-	p.Feed("\r\n");
-
-	CHECK(p.GetExternalState() == InvalidRequest);
-	CHECK(p.GetInternalState() == Error);
-}
-
 TEST_CASE("BUG: Version parsed but method failed - state consistency") {
 	// What happens if version is valid but method is invalid?
 	HttpParser p;
@@ -261,17 +200,4 @@ TEST_CASE("BUG: Version parsed but method failed - state consistency") {
 	// Does the parser properly set Error state?
 	CHECK(p.GetExternalState() == InvalidRequest);
 	CHECK(p.GetInternalState() == Error);
-}
-
-TEST_CASE("BUG: Very large Content-Length value (near size_t max)") {
-	// Edge case with overflow protection
-	HttpParser p;
-
-	p.Feed("POST / HTTP/1.1\r\n");
-	p.Feed("Host: example.com\r\n");
-	p.Feed("Content-Length: 99999999999999999999\r\n");  // Very large
-	p.Feed("\r\n");
-
-	// ParseDecimalSize should handle overflow
-	CHECK(p.GetExternalState() == InvalidRequest);
 }
