@@ -1,17 +1,32 @@
 #ifndef HTTP_RESPONSE_STATE_H
-#define HTTP_RESPONSE_STATE_H
+# define HTTP_RESPONSE_STATE_H
 
-#include "config-mock.hpp"
-#include <cstddef>
-#include <cstdint>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
+//#include "config-mock.hpp"
+# include <cstddef>
+# include <cstdint>
+# include <filesystem>
+# include <fstream>
+# include <iostream>
+# include <map>
+# include <map>
+# include <string>
+# include <string>
+# include <vector>
 
-enum StatusCode
+struct	HttpRequest
+{
+	std::string method_ = "GET";
+	// Path relative to the project root used by tests
+	std::string path_ = "test/response_test/mock_site/simple.html";
+	std::string version_ = "HTTP/1.1";
+	std::map<std::string, std::string> headers_ = {{"Host", "localhost:8080"},
+		{"Accept",
+		"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"},
+		{"Connection", "close"}, {"User-Agent", "test-client/1.0"}};
+	std::string body_;
+};
+
+enum	StatusCode
 {
 	OK = 200,
 	FORBIDDEN = 403,
@@ -22,13 +37,13 @@ enum StatusCode
 
 class HttpResponseState
 {
-private:
+  private:
 	const std::string httpVersion_ = "HTTP/1.1";
 	StatusCode statusCode_;
 	std::vector<std::pair<std::string, std::string>> headers_;
 	std::vector<unsigned char> body_;
 
-public:
+  public:
 	HttpResponseState();
 	// HttpResponseState(const HttpResponseState &src);
 	// HttpResponseState &operator=(const HttpResponseState &src);
