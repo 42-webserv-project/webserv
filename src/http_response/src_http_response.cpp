@@ -55,18 +55,6 @@ StatusCode	check_file_error(const HttpRequest &request)
 	return (OK);
 }
 
-int	fill_response(const HttpRequest &request)
-{
-	HttpResponseState	response;
-
-	response.set_statusCode(request);
-	response.set_body(request);
-	response.set_headers(request);
-	response.serialize();
-
-	return (0);
-}
-
 // read file into memory
 std::vector<unsigned char> read_file(const HttpRequest request)
 {
