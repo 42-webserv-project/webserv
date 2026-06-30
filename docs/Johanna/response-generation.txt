@@ -30,6 +30,7 @@
 
 	Example:
 		// Read file
+  private:
 		std::string body = read_file("file.html");
 
 		// Build response
