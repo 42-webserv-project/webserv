@@ -108,3 +108,13 @@ std::string HttpResponseState::serialize(void)
 	//std::cout << response << std::endl;
 	return response;
 }
+
+int	HttpResponseState::fill_response(const HttpRequest &request) 
+{
+	set_statusCode(request);
+	set_body(request);
+	set_headers(request);
+	serialize();
+
+	return (0);
+}

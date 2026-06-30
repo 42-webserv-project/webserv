@@ -49,6 +49,7 @@ class HttpResponseState
 	// HttpResponseState &operator=(const HttpResponseState &src);
 	~HttpResponseState();
 
+	int fill_response(const HttpRequest &request);
 	void set_body(const HttpRequest &request);
 	void set_statusCode(const HttpRequest &request);
 	StatusCode get_statusCode();
