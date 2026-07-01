@@ -30,6 +30,7 @@
 
 	Example:
 		// Read file
+  private:
 		std::string body = read_file("file.html");
 
 		// Build response
@@ -57,3 +58,18 @@ class HttpResponseState {
 		HttpResponseState& operator=(const HttpResponseState &src);
 		~HttpResponseState;
 }
+
+TO DO / CURRENT STATE:
+- done: basic response state exists and serialization now emits status line + headers + blank line + body in that order.
+- done: headers are appended during serialization, and body length is used to populate Content-Length.
+- done: .html is mapped to text/html, but the MIME mapping is still very small.
+- still to do: define a valid HTTP status policy for unsupported methods and error cases; the current OTHER/-1 path is not a real wire status.
+- still to do: decide whether error responses should be serialized with real error bodies/headers or built separately from the success path.
+- still to do: extend Content-Type mapping beyond html and add a safe fallback for unknown or missing extensions.
+- still to do: make the request-handling flow in src_http_response.cpp produce a complete serialized response instead of only constructing a response object in a local helper.
+- still to do: tighten http_response_assert.cpp by enabling the strict toggles once the status and header rules are final.
+- later: extend support beyond GET, then handle more complex request types and CGI/static branching.
+- later: add github actions.
+
+Current gap notes:
+- fill_response() still just assembles a response locally; it does not yet own the full success/failure wire path.
