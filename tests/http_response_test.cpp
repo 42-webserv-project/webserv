@@ -21,6 +21,11 @@ TEST_CASE("Simple Check Get Request Method")
 
 // Test cases to build:
 /* 
+// file that is a directory
+// file does not exist
+
+// problem: Root will be different on each PC, how will we have a file there if we fetch from github?
+// file from root (~/somefileinroot)
 	- get request
 	- later : post request/delete/other?
 	- missing request
