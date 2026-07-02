@@ -39,6 +39,7 @@ enum	StatusCode
 class HttpResponseState
 {
 private:
+	// Hardcorded version cause (currently) only HTTP1.1 allowed
 	const std::string httpVersion_ = "HTTP/1.1";
 	StatusCode statusCode_;
 	std::vector<std::pair<std::string, std::string>> headers_;
