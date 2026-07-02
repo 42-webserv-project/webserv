@@ -30,7 +30,7 @@
 
 StatusCode	check_method_error(const HttpRequest &request)
 {
-	if (request.method_ == "GET")
+	if (request.method_ == Get)
 		return (OK);
 	return (NOT_ALLOWED);
 }

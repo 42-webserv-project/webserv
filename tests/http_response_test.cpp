@@ -2,13 +2,13 @@
 #include "doctest.h"
 #include "../src/http_response/http_response_state.hpp"
 
-#include "../src/http_request/http_request.hpp"
+
 
 TEST_CASE("Simple Check Get Request Method")
 {
 	HttpRequest r;
 
-	r.method_ = Post;
+	r.method_ = Get;
 
 	HttpResponseState response;
 	response.fill_response(r);
