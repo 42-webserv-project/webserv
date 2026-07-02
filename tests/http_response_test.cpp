@@ -9,11 +9,16 @@ TEST_CASE("Simple Check Get Request Method")
 	HttpRequest r;
 
 	r.method_ = Get;
+	r.path_ = "tests/mock_files/simple.html";
 
 	HttpResponseState response;
+
 	response.fill_response(r);
 	CHECK(response.get_statusCode() == OK);
 }
+
+
+
 // Test cases to build:
 /* 
 	- get request
