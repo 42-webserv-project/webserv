@@ -27,3 +27,6 @@
 
 - c system calls
 	- [Linux man-pages: Socket(7)](https://man7.org/linux/man-pages/man7/socket.7.html)
+
+- network
+	- [Human Augmented: Ports and Sockets explained](https://www.youtube.com/watch?v=jnHHpNRrdwA)
