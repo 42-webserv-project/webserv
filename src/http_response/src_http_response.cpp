@@ -87,7 +87,7 @@ std::string complete_MIME_type(std::string extension) {
 		return "application/json";
 	else if (extension == "png")
 		return "image/png";
-	else if (extension == "jpg" || "jpeg" )
+	else if (extension == "jpg" || extension == "jpeg" )
 		return "image/jpeg";
 	else if (extension == "txt")
 		return "text/plain";
