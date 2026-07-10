@@ -117,7 +117,7 @@ TEST_CASE("Empty paths are not found")
 TEST_CASE("Directory paths are forbidden and have no content type")
 {
 	HttpResponseState response;
-	HttpRequest request = make_request(Get, "tests/mocks/directory_test");
+	HttpRequest request = make_request(Get, "tests/mock_files/directory_test");
 
 	CHECK(response.fill_response(request) == 0);
 	CHECK(response.get_statusCode() == FORBIDDEN);
