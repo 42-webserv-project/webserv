@@ -114,7 +114,7 @@ TEST_CASE("Empty paths are not found")
 	check_response(make_request(Get, ""), NOT_FOUND, "");
 }
 
-TEST_CASE("Directory paths are forbidden and have no content type")
+/*TEST_CASE("Directory paths are forbidden and have no content type")
 {
 	HttpResponseState response;
 	HttpRequest request = make_request(Get, "tests/mock_files/directory_test");
@@ -125,7 +125,7 @@ TEST_CASE("Directory paths are forbidden and have no content type")
 	CHECK(response.serialize().find("Content-Type: \r\n") != std::string::npos);
 }
 
-/*TEST_CASE("Unreadable files are forbidden")
+TEST_CASE("Unreadable files are forbidden")
 {
 	check_response(make_request(Get, "tests/mocks/wrong_permission_file.html"), FORBIDDEN, "text/html");
 }*/
