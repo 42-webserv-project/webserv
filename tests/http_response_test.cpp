@@ -1,6 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
-#include "../src/http_response/http_response_state.hpp"
+#include "../src/http_response/http_response.hpp"
 
 
 
@@ -11,10 +11,10 @@ TEST_CASE("Simple Check Get Request Method")
 	r.method_ = Get;
 	r.path_ = "tests/mock_files/simple.html";
 
-	HttpResponseState response;
+	HttpResponse response;
 
 	response.fill_response(r);
-	CHECK(response.get_statusCode() == OK);
+	CHECK(response.get_status_code() == OK);
 }
 
 

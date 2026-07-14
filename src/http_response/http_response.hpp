@@ -1,5 +1,5 @@
-#ifndef HTTP_RESPONSE_STATE_H
-#define HTTP_RESPONSE_STATE_H
+#ifndef HTTP_RESPONSE_H
+#define HTTP_RESPONSE_H
 
 //#include "config-mock.hpp"
 # include <cstddef>
@@ -36,7 +36,7 @@ enum	StatusCode
 	OTHER = -1,
 };
 
-class HttpResponseState
+class HttpResponse
 {
 private:
 	const std::string httpVersion_ = "HTTP/1.1";
@@ -45,15 +45,15 @@ private:
 	std::vector<unsigned char> body_;
 
 public:
-	HttpResponseState();
-	// HttpResponseState(const HttpResponseState &src);
-	// HttpResponseState &operator=(const HttpResponseState &src);
-	~HttpResponseState();
+	HttpResponse();
+	HttpResponse(const HttpResponse &src);
+	HttpResponse &operator=(const HttpResponse &src);
+	~HttpResponse();
 
 	int fill_response(const HttpRequest &request);
 	void set_body(const HttpRequest &request);
-	void set_statusCode(const HttpRequest &request);
-	StatusCode get_statusCode();
+	void set_status_code(const HttpRequest &request);
+	StatusCode get_status_code();
 	void set_headers(const HttpRequest &request);
 	void add_header(const std::string &name, const std::string &value);
 	std::string serialize(void);
