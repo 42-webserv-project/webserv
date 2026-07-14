@@ -1,5 +1,6 @@
 #include "http_response_state.hpp"
 #include <algorithm>
+#include "logger/logger.hpp"
 
 // read file:
 // check if file exists,
@@ -44,14 +45,26 @@ StatusCode	check_file_error(const HttpRequest &request)
 	if (!std::filesystem::exists(p, ec))
 		return (NOT_FOUND);
 	if (ec)
+	{
+		LOG_WARN("Permissions should be checked manually");
 		return (FORBIDDEN);
+	}
 	if (!std::filesystem::is_regular_file(p, ec))
+	{
+		LOG_WARN("Permissions should be checked manually");
 		return (FORBIDDEN);
+	}
 	if (ec)
+	{
+		LOG_WARN("Permissions should be checked manually");
 		return (FORBIDDEN);
+	}
 	std::ifstream input(p.c_str(), std::ifstream::binary);
 	if (!input.is_open())
+	{
+		LOG_WARN("Permissions should be checked manually");
 		return (FORBIDDEN);
+	}
 	return (OK);
 }
 
@@ -61,7 +74,10 @@ std::vector<unsigned char> read_file(const HttpRequest request)
 	// open file in binary mode
 	std::ifstream input(request.path_, std::ifstream::binary);
 	if (!input.is_open())
+	{
+		LOG_WARN("Permissions should be checked manually");
 		return {};
+	}
 
 	// check size of the file
 	input.seekg(0, std::ios::end);
@@ -87,7 +103,7 @@ std::string complete_MIME_type(std::string extension) {
 		return "application/json";
 	else if (extension == "png")
 		return "image/png";
-	else if (extension == "jpg" || "jpeg" )
+	else if (extension == "jpg" || extension == "jpeg" )
 		return "image/jpeg";
 	else if (extension == "txt")
 		return "text/plain";

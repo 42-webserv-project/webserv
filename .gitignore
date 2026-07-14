@@ -57,3 +57,6 @@ test/.DS_Store
 
 # IDE setup
 .vscode/
+
+# mock wrong permission file
+wrong_permission*
