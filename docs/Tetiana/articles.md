@@ -20,13 +20,21 @@
 	- [CPPLearn: Global Scope Resolution](https://www.learncpp.com/cpp-tutorial/user-defined-namespaces-and-the-scope-resolution-operator/)
 	- [Microsoft Build 2026: Scope C++](https://learn.microsoft.com/en-us/cpp/cpp/scope-visual-cpp?view=msvc-170)
 
+- Design Patterns
+	- [Object Oriented Design](https://www.oodesign.com/)
+
+
 - singleton pattern
 	- [Refactoring GURU](https://refactoring.guru/design-patterns/singleton)
 	- [Wikipedia](https://en.wikipedia.org/wiki/Singleton_pattern)
 	- [GeekForGeeks – diffent way to implement Singleton pattern](https://www.geeksforgeeks.org/system-design/singleton-design-pattern/)
 
 - c system calls
+	- [POSIX.1-2024 (Issue 8) / Single UNIX Specification, Version 5](https://pubs.opengroup.org/onlinepubs/9799919799/)
+	- [UNIX System Overview & Architecture](https://www.unix.org/overview.html)
 	- [Linux man-pages: Socket(7)](https://man7.org/linux/man-pages/man7/socket.7.html)
+	- [The Open Group: <poll.h>](https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/poll.h.html)
+	- [The Open Group: poll, ppoll — input/output multiplexing](https://pubs.opengroup.org/onlinepubs/9799919799/functions/poll.html)
 
 - network
 	- [Human Augmented: Ports and Sockets explained](https://www.youtube.com/watch?v=jnHHpNRrdwA)
